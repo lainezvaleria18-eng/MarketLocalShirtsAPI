@@ -1,0 +1,422 @@
+{
+  "_format": "simpler-project",
+  "_version": 2,
+  "_exportedAt": "2026-09-09T15:51:29.800Z",
+  "project": {
+    "id": "8011063b-1b67-4d60-b696-e29bcd2352a2",
+    "name": "MarketLocalShirts",
+    "status": "in-progress",
+    "createdAt": "2026-09-09T02:22:13.512Z",
+    "updatedAt": "2026-09-09T15:50:14.805Z"
+  },
+  "modules": {
+    "seed": {
+      "projectId": "8011063b-1b67-4d60-b696-e29bcd2352a2",
+      "projectName": "MarketLocalShirts",
+      "oneLineSummary": "Plataforma web de comercio electrónico especializada en la venta rápida y accesible de camisas para hombres.",
+      "problemStatement": "Centraliza la gestión de inventario y ventas en un solo canal digital. Elimina la fricción de las compras físicas al ofrecer un catálogo en línea fácil de usar, respaldado por una arquitectura técnica dividida (API y frontend) que asegura velocidad y estabilidad en el procesamiento de pedidos.",
+      "targetAudience": [
+        {
+          "id": "cc19b0fd-d472-4e40-a1b6-bd3c3dece265",
+          "label": "Compradores que buscan variedad, disponibilidad y comodidad al adquirir camisas masculinas desde cualquier dispositivo, así como administradores de tienda que requieren controlar el catálogo de productos."
+        }
+      ],
+      "hiddenFailureReason": "Problemas de integración técnica: Dificultades y retrasos al intentar comunicar correctamente la API desarrollada en Java (Spring Boot) con el frontend construido en C#\n\nAlcance excesivo del proyecto: Intentar implementar características secundarias complejas antes de tener un flujo básico estable y funcional (visualización del catálogo y funcionamiento del carrito de compras).\n\nGestión del tiempo: Subestimar el tiempo necesario para depurar errores entre las distintas capas de desarrollo, lo que impediría entregar el proyecto en la fecha límite establecida."
+    },
+    "anatomy": {
+      "projectId": "8011063b-1b67-4d60-b696-e29bcd2352a2",
+      "features": [
+        {
+          "id": "3ba8a197-ab06-4d7c-a772-58c26b411b75",
+          "name": "Catálogo de Productos",
+          "description": "Vista principal web donde los clientes exploran las camisas disponibles. Consumirá la información desde la API en Spring Boot conectada a la base de datos SQL Server (Somee).",
+          "type": "core",
+          "complexity": "medium",
+          "dependencies": [],
+          "associatedNodes": []
+        },
+        {
+          "id": "69699f04-63e1-41dd-abee-961b515dbc38",
+          "name": "Panel de Administración (Admin)",
+          "description": "1. datos de lectura de ventas, usuarios y atajos rapidos.\n2. datos de auditorias",
+          "type": "core",
+          "complexity": "medium",
+          "dependencies": [],
+          "associatedNodes": []
+        },
+        {
+          "id": "d9aa52dc-f0fd-4a7b-bf47-0befca5a8fb0",
+          "name": "Carrito de Compras y Checkout",
+          "description": "Sistema para que el usuario seleccione las prendas, calcule el subtotal dinámicamente y genere la orden de compra que se enviará al backend.",
+          "type": "supporting",
+          "complexity": "medium",
+          "dependencies": [
+            "3ba8a197-ab06-4d7c-a772-58c26b411b75"
+          ],
+          "associatedNodes": []
+        },
+        {
+          "id": "9f34c50f-be18-4559-a8a2-a73668549ee6",
+          "name": "login",
+          "description": "para inciar sesion.\n\nNombre, correo, telefono y contraseña.",
+          "type": "core",
+          "complexity": "medium",
+          "dependencies": [],
+          "associatedNodes": []
+        },
+        {
+          "id": "75c47967-7740-4ddb-8d75-2388c5bee7c7",
+          "name": "landing",
+          "description": "pagina estatica de marketing",
+          "type": "core",
+          "complexity": "medium",
+          "dependencies": [],
+          "associatedNodes": []
+        },
+        {
+          "id": "21202dd0-ed62-4468-9292-b24c85387302",
+          "name": "Pasarela de pago",
+          "description": "para comprar los snickers. formulario de datos bancarios y direccion de facturacion.",
+          "type": "core",
+          "complexity": "medium",
+          "dependencies": [],
+          "associatedNodes": []
+        },
+        {
+          "id": "0f2d546d-ec72-488b-be95-d788bceb7414",
+          "name": "recuperar contraseña",
+          "description": "para actualizar contraseña",
+          "type": "supporting",
+          "complexity": "medium",
+          "dependencies": [],
+          "associatedNodes": []
+        },
+        {
+          "id": "9378c761-7f15-49d2-8870-de080b1eaa2d",
+          "name": "vista previa de camisas",
+          "description": "cuantos articulos queda en stock, foto de los camisas, etc.",
+          "type": "core",
+          "complexity": "medium",
+          "dependencies": [],
+          "associatedNodes": []
+        },
+        {
+          "id": "a4d3a785-98b9-424b-9dd4-8ce185c70448",
+          "name": "Historial personal de compra realizadas y recivos",
+          "description": "el usuario cliente puede ver su historial de compras. ",
+          "type": "nice-to-have",
+          "complexity": "medium",
+          "dependencies": [],
+          "associatedNodes": []
+        },
+        {
+          "id": "82539418-e1f5-48a5-a9ef-b6b6b257971f",
+          "name": "ajustes o preferencias de usuario",
+          "description": "1. claro o oscuro de interfaz.\n2. Eliminar cuenta o suspender.\n3. politicas de servicio y privacidad.\n4. idioma ingles y español.\n",
+          "type": "nice-to-have",
+          "complexity": "medium",
+          "dependencies": [],
+          "associatedNodes": []
+        },
+        {
+          "id": "75690d04-9958-4b81-8c3c-b442dde11999",
+          "name": "Stock (admin)",
+          "description": "1. editar precios\n2. editar cuantos productos quedan\nbasicamente (CRUD)",
+          "type": "core",
+          "complexity": "medium",
+          "dependencies": [],
+          "associatedNodes": []
+        },
+        {
+          "id": "394c2166-0ff8-4cd0-ba74-29d6ed8d1d2e",
+          "name": "Gestion de usuario (admin)",
+          "description": "1. Ascender o degradar usuario normal a admin y viceversa.\n2. banear usuario. (lo mismo que desactivar o reactivar cuentas)\n3. restablecer contraseña.",
+          "type": "core",
+          "complexity": "medium",
+          "dependencies": [],
+          "associatedNodes": []
+        },
+        {
+          "id": "77f1b1e7-5da5-4845-8324-ef0ddc979ddb",
+          "name": "Perfil de usuario",
+          "description": "donde se encuentra informacion del usuario",
+          "type": "nice-to-have",
+          "complexity": "medium",
+          "dependencies": [],
+          "associatedNodes": []
+        },
+        {
+          "id": "aa49fbe6-1d5c-4686-94eb-57ccc1b68210",
+          "name": "Barra de busqueda y filtros",
+          "description": "busqueda de titulos, etc.",
+          "type": "nice-to-have",
+          "complexity": "medium",
+          "dependencies": [],
+          "associatedNodes": []
+        }
+      ]
+    },
+    "architecture": {
+      "projectId": "8011063b-1b67-4d60-b696-e29bcd2352a2",
+      "nodes": [
+        {
+          "id": "b32c34c2-6d8a-4d7c-ae07-bab2dd02fd13",
+          "name": "Inicio / Tienda",
+          "description": "Vista principal de la tienda donde los usuarios navegan por el catálogo, gestionan su cuenta y buscan camisas para comprar",
+          "parentId": null,
+          "associatedFeatures": [
+            "3ba8a197-ab06-4d7c-a772-58c26b411b75",
+            "75c47967-7740-4ddb-8d75-2388c5bee7c7",
+            "9f34c50f-be18-4559-a8a2-a73668549ee6",
+            "0f2d546d-ec72-488b-be95-d788bceb7414",
+            "9378c761-7f15-49d2-8870-de080b1eaa2d",
+            "aa49fbe6-1d5c-4686-94eb-57ccc1b68210",
+            "77f1b1e7-5da5-4845-8324-ef0ddc979ddb",
+            "a4d3a785-98b9-424b-9dd4-8ce185c70448",
+            "82539418-e1f5-48a5-a9ef-b6b6b257971f"
+          ],
+          "order": 0
+        },
+        {
+          "id": "7142ea5b-c231-41a1-b7b6-f8fe6e097ed4",
+          "name": "Pantalla de Pago",
+          "description": "Módulo encargado de procesar el carrito de compras y ejecutar la pasarela de pagos de forma segura",
+          "parentId": null,
+          "associatedFeatures": [
+            "d9aa52dc-f0fd-4a7b-bf47-0befca5a8fb0",
+            "21202dd0-ed62-4468-9292-b24c85387302"
+          ],
+          "order": 1
+        },
+        {
+          "id": "c3d2893f-5224-4a05-8f76-a9a275e9caa2",
+          "name": "Panel de Control ",
+          "description": "Área privada para la administración general del inventario, stock, control de usuarios y preferencias del sistema",
+          "parentId": null,
+          "associatedFeatures": [
+            "69699f04-63e1-41dd-abee-961b515dbc38",
+            "75690d04-9958-4b81-8c3c-b442dde11999",
+            "394c2166-0ff8-4cd0-ba74-29d6ed8d1d2e",
+            "82539418-e1f5-48a5-a9ef-b6b6b257971f"
+          ],
+          "order": 2
+        }
+      ]
+    },
+    "logic": {
+      "projectId": "8011063b-1b67-4d60-b696-e29bcd2352a2",
+      "blocks": [
+        {
+          "id": "e450d832-1d00-438e-a336-7472a5b7b102",
+          "type": "user-flow",
+          "title": "Flujo principal de compra",
+          "content": "El usuario ingresa a la vista de Inicio/Tienda y explora el catálogo. Selecciona una camisa y su talla, y hace clic en \"Añadir al carrito\". Luego navega a la Pantalla de Pago, revisa el subtotal y confirma. El frontend envía la petición a la API en Spring Boot, se registra la orden en la base de datos SQL Server y se vacía el carrito del cliente.",
+          "status": "defined"
+        },
+        {
+          "id": "4612a58a-ee98-4fa3-993c-591809751730",
+          "type": "business-rule",
+          "title": "Actualización de inventario",
+          "content": "El stock de las camisas solo se reduce en la base de datos de Somee una vez que la orden de compra ha sido confirmada completamente en el checkout. Añadir un producto al carrito no reserva el stock físico, permitiendo que otros usuarios puedan comprarlo si el primer cliente abandona la sesión.",
+          "status": "defined"
+        },
+        {
+          "id": "41929194-64a1-4866-8803-8d775bd6d40b",
+          "type": "edge-case",
+          "title": "Producto agotado durante la compra",
+          "content": "Si un cliente tiene una camisa en su carrito, pero otro usuario compra la última unidad disponible antes de que el primer cliente pague, el sistema validará el stock nuevamente al intentar hacer el checkout. Si el stock es 0, mostrará una alerta de \"Stock insuficiente\" y no procesará la orden para ese artículo.",
+          "status": "defined"
+        }
+      ]
+    },
+    "stack": {
+      "projectId": "8011063b-1b67-4d60-b696-e29bcd2352a2",
+      "categories": [
+        {
+          "key": "frontend",
+          "label": "stack.category.frontend",
+          "choice": "C# con ASP.NET Core (MVC / Web)",
+          "justification": "Permite construir interfaces web dinámicas, seguras y escalables utilizando un entorno robusto. Facilita el consumo de servicios RESTful (la API externa) mediante controladores, garantizando una separación clara entre la vista del cliente y la lógica del servidor."
+        },
+        {
+          "key": "backend",
+          "label": "stack.category.backend",
+          "choice": "Java con Spring Boot",
+          "justification": "Proporciona un ecosistema ágil y estructurado para desarrollar la API RESTful. Al utilizar dependencias como Spring Data JPA y el driver de MS SQL Server, permite gestionar de manera eficiente y segura la conexión y el CRUD hacia la base de datos alojada en la plataforma Somee."
+        },
+        {
+          "key": "database",
+          "label": "stack.category.database",
+          "choice": "SQL Server (Somee)",
+          "justification": "Es un motor relacional potente y confiable. Al alojarlo en Somee, aseguramos disponibilidad en la nube para que la API en Spring Boot y el frontend en ASP.NET Core puedan interactuar con el inventario de camisas y los usuarios en tiempo real desde cualquier entorno."
+        },
+        {
+          "key": "auth",
+          "label": "stack.category.auth",
+          "choice": "JWT (JSON Web Tokens) con Spring Security.",
+          "justification": "Permite una autenticación sin estado (stateless) que es ideal y segura para comunicar de forma independiente el frontend en C# con la API RESTful en Java. Garantiza que solo los usuarios y administradores autorizados accedan a sus áreas."
+        },
+        {
+          "key": "infra",
+          "label": "stack.category.infra",
+          "choice": "Somee (Base de datos) y GitHub (Repositorios).",
+          "justification": "Somee ofrece alojamiento en la nube nativo para SQL Server, garantizando que la base de datos esté siempre en línea. GitHub asegura el control de versiones, permitiendo gestionar los proyectos de frontend y backend por separado."
+        },
+        {
+          "key": "services",
+          "label": "stack.category.services",
+          "choice": "Consumo de API RESTful propia.",
+          "justification": "El frontend web no utilizará servicios de terceros complejos, sino que consumirá la API desarrollada internamente en Spring Boot. Esto garantiza control total sobre la lógica de negocio, el flujo de inventario y el procesamiento del carrito."
+        },
+        {
+          "key": "libraries",
+          "label": "stack.category.libraries",
+          "choice": "Spring Data JPA, MS SQL Server Driver y Lombok.",
+          "justification": "El MS SQL Server Driver es indispensable para establecer la conexión con Somee. Spring Data JPA simplifica la interacción con la base de datos (CRUD), y Lombok reduce significativamente el código repetitivo en Java para desarrollar más rápido."
+        }
+      ]
+    },
+    "identity": {
+      "projectId": "8011063b-1b67-4d60-b696-e29bcd2352a2",
+      "finalName": "MarketLocalShirts",
+      "nameVariants": [
+        "MLS",
+        "Tienda MarketLocal",
+        "MarketLocal Shirts"
+      ],
+      "colors": [
+        {
+          "hex": "#6366f1",
+          "role": "primary",
+          "blendMode": "normal",
+          "opacity": 100
+        },
+        {
+          "hex": "#6366f1",
+          "role": "background",
+          "blendMode": "screen"
+        },
+        {
+          "hex": "#6366f1",
+          "role": "accent",
+          "blendMode": "multiply"
+        },
+        {
+          "hex": "#6366f1",
+          "role": "text",
+          "blendMode": "overlay"
+        }
+      ],
+      "typography": [
+        {
+          "id": "3add17a2-72fc-4a40-86c1-c3ce5c7af093",
+          "fontFamily": "Montserrat",
+          "role": "Body",
+          "previewText": ""
+        }
+      ],
+      "toneAdjectives": [
+        "professional",
+        "direct"
+      ],
+      "toneDescription": "profesional, directo y seguro. Transmite confianza técnica.",
+      "visualReferences": [],
+      "logoConcept": "Un diseño tipográfico minimalista con las iniciales de la marca (Market Local Shirts). Representa simplicidad, accesibilidad y un enfoque moderno y directo para el comercio electrónico local",
+      "logoSketch": "data:image/png;base64,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"
+    },
+    "roadmap": {
+      "projectId": "8011063b-1b67-4d60-b696-e29bcd2352a2",
+      "phases": [
+        {
+          "id": "445fc59f-4da9-4cd2-bd65-488aaac708b5",
+          "name": "Backend, Base de Datos y Catálogo",
+          "objective": "Desarrollar la API REST en Spring Boot, conectarla a SQL Server en Somee y construir la vista del catálogo en C#",
+          "featureIds": [
+            "3ba8a197-ab06-4d7c-a772-58c26b411b75",
+            "69699f04-63e1-41dd-abee-961b515dbc38",
+            "9f34c50f-be18-4559-a8a2-a73668549ee6",
+            "75c47967-7740-4ddb-8d75-2388c5bee7c7",
+            "9378c761-7f15-49d2-8870-de080b1eaa2d",
+            "aa49fbe6-1d5c-4686-94eb-57ccc1b68210",
+            "0f2d546d-ec72-488b-be95-d788bceb7414",
+            "82539418-e1f5-48a5-a9ef-b6b6b257971f"
+          ],
+          "durationWeeks": 2,
+          "successCriteria": "La API devuelve los datos correctamente desde la base de datos y el catálogo web en ASP.NET Core muestra los productos sin errores",
+          "order": 0
+        },
+        {
+          "id": "61106701-b000-4960-9b87-8314c0bf0c8c",
+          "name": "Carrito y Checkout",
+          "objective": "Integrar el carrito en el frontend consumiendo la API.",
+          "featureIds": [
+            "21202dd0-ed62-4468-9292-b24c85387302",
+            "75690d04-9958-4b81-8c3c-b442dde11999",
+            "394c2166-0ff8-4cd0-ba74-29d6ed8d1d2e",
+            "77f1b1e7-5da5-4845-8324-ef0ddc979ddb",
+            "d9aa52dc-f0fd-4a7b-bf47-0befca5a8fb0",
+            "a4d3a785-98b9-424b-9dd4-8ce185c70448"
+          ],
+          "durationWeeks": 2,
+          "successCriteria": "El usuario puede finalizar la compra conectándose al backend.",
+          "order": 1
+        }
+      ]
+    },
+    "prototyping": {
+      "projectId": "8011063b-1b67-4d60-b696-e29bcd2352a2",
+      "blocks": [
+        {
+          "id": "eb7a1205-23f2-4171-9bc4-d8f5be98b8d8",
+          "name": "Navbar",
+          "blockType": "nav",
+          "x": 40,
+          "y": 40,
+          "width": 200,
+          "height": 120,
+          "zIndex": 0,
+          "content": "Inicio , Catálogo ,Carrito ,Mis pedidos, Login Admin",
+          "colorRef": "#6366f1"
+        },
+        {
+          "id": "cbd8db5e-16ed-4d6b-9b9e-2bd7587e1db5",
+          "name": "Catálogo",
+          "blockType": "content",
+          "x": 40,
+          "y": 180,
+          "width": 200,
+          "height": 120,
+          "zIndex": 1,
+          "colorRef": "#6366f1"
+        },
+        {
+          "id": "8e66df90-30b1-45e4-935f-f6ac03d2be31",
+          "name": "Menú Admin",
+          "blockType": "sidebar",
+          "x": 40,
+          "y": 320,
+          "width": 200,
+          "height": 120,
+          "zIndex": 2,
+          "content": "Productos, Stock, Usuarios, Marcas, Pedidos, Cerrar sesión",
+          "colorRef": "#6366f1"
+        },
+        {
+          "id": "520bbadc-ac6b-4830-aca0-28903eaacb7d",
+          "name": "Tablas Stock/Usuarios",
+          "blockType": "content",
+          "x": 40,
+          "y": 460,
+          "width": 200,
+          "height": 120,
+          "zIndex": 3,
+          "content": "Gestión de Productos, Stock, Usuarios y Pedidos",
+          "colorRef": "#6366f1"
+        }
+      ],
+      "canvasWidth": 960,
+      "canvasHeight": 640,
+      "exportedHtml": "<div style=\"position:relative;width:960px;height:640px;background:#fff;\">\n  <div style=\"position:absolute;left:40px;top:40px;width:200px;height:120px;border:1px solid #ccc;background:#f5f5f5;display:flex;align-items:center;justify-content:center;font-family:sans-serif;font-size:12px;\" data-type=\"nav\">Inicio , Catálogo ,Carrito ,Mis pedidos, Login Admin</div>\n  <div style=\"position:absolute;left:40px;top:180px;width:200px;height:120px;border:1px solid #ccc;background:#f5f5f5;display:flex;align-items:center;justify-content:center;font-family:sans-serif;font-size:12px;\" data-type=\"content\">Catálogo</div>\n  <div style=\"position:absolute;left:40px;top:320px;width:200px;height:120px;border:1px solid #ccc;background:#f5f5f5;display:flex;align-items:center;justify-content:center;font-family:sans-serif;font-size:12px;\" data-type=\"sidebar\">Productos, Stock, Usuarios, Marcas, Pedidos, Cerrar sesión</div>\n  <div style=\"position:absolute;left:40px;top:460px;width:200px;height:120px;border:1px solid #ccc;background:#f5f5f5;display:flex;align-items:center;justify-content:center;font-family:sans-serif;font-size:12px;\" data-type=\"content\">Gestión de Productos, Stock, Usuarios y Pedidos</div>\n</div>"
+    }
+  }
+}

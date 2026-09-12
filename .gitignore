@@ -1,0 +1,138 @@
+## Ignore IDE temporary files, build results, OS junk, and local secrets.
+## Adapted from the course gitignore template for MarketLocalShirtsAPI (Java / Spring Boot).
+##
+## Original course template was generated from `dotnet new gitignore`
+## and then adapted to this Maven + Spring Boot project.
+
+# dotenv files
+.env
+.env.*
+!.env.example
+
+# User-specific files
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.userprefs
+
+# Build results (Maven / Java)
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+target/
+build/
+out/
+!**/src/main/**/target/
+!**/src/test/**/target/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+# Compiled class files
+*.class
+
+# Package Files
+*.jar
+*.war
+*.nar
+*.ear
+*.zip
+*.tar.gz
+*.rar
+!**/src/main/**/lib/*.jar
+!.mvn/wrapper/maven-wrapper.jar
+
+# Log files
+*.log
+hs_err_pid*
+replay_pid*
+
+# Maven
+.flattened-pom.xml
+dependency-reduced-pom.xml
+
+# SQL Server files
+*.mdf
+*.ldf
+*.ndf
+
+# Node (if tools are added later)
+node_modules/
+
+# JetBrains IntelliJ / Rider
+.idea/
+*.iml
+*.ipr
+*.iws
+*.sln.iml
+
+# Eclipse / Spring Tools
+.settings/
+.project
+.classpath
+.factorypath
+.springBeans
+.sts4-cache/
+.apt_generated/
+
+# NetBeans
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+# VS Code
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace
+.history/
+
+# Kotlin
+.kotlin
+
+##
+## macOS
+##
+
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+##
+## Windows
+##
+
+Thumbs.db
+ehthumbs.db
+ehthumbs_vista.db
+*.stackdump
+[Dd]esktop.ini
+$RECYCLE.BIN/
+*.lnk
+*.swp
+*~
