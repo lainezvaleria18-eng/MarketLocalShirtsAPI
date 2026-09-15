@@ -102,6 +102,6 @@ public class PedidoController {
 
     private boolean esAdmin(Authentication authentication) {
         return authentication.getAuthorities().stream()
-                .anyMatch(autoridad -> "ROLE_ADMIN".equals(autoridad.getAuthority()));
+                .anyMatch(autoridad -> "ADMIN".equals(autoridad.getAuthority()));
     }
 }

@@ -52,6 +52,7 @@ public class MarcaService implements IMarcaService {
     @Override
     public MarcaSalida crear(MarcaGuardar marcaGuardar) {
         Marca marca = modelMapper.map(marcaGuardar, Marca.class);
+        marca.setEstado(true);
         marca = marcaRepository.save(marca);
         return modelMapper.map(marca, MarcaSalida.class);
     }

@@ -3,7 +3,9 @@ package org.esfe.servicios.implementaciones;
 import org.esfe.dtos.usuario.UsuarioGuardar;
 import org.esfe.dtos.usuario.UsuarioModificar;
 import org.esfe.dtos.usuario.UsuarioSalida;
+import org.esfe.modelos.Rol;
 import org.esfe.modelos.Usuario;
+import org.esfe.repositorios.IRolRepository;
 import org.esfe.repositorios.IUsuarioRepository;
 import org.esfe.servicios.interfaces.IUsuarioService;
 import org.modelmapper.ModelMapper;
@@ -24,6 +26,9 @@ public class UsuarioService implements IUsuarioService {
     private IUsuarioRepository usuarioRepository;
 
     @Autowired
+    private IRolRepository rolRepository;
+
+    @Autowired
     private ModelMapper modelMapper;
 
     @Autowired
@@ -31,8 +36,7 @@ public class UsuarioService implements IUsuarioService {
 
     @Override
     public List<UsuarioSalida> obtenerTodos() {
-        List<Usuario> usuarios = usuarioRepository.findAll();
-        return usuarios.stream()
+        return usuarioRepository.findAll().stream()
                 .map(usuario -> modelMapper.map(usuario, UsuarioSalida.class))
                 .collect(Collectors.toList());
     }
@@ -62,16 +66,12 @@ public class UsuarioService implements IUsuarioService {
 
     @Override
     public UsuarioSalida crear(UsuarioGuardar usuarioGuardar) {
-        Usuario usuario = modelMapper.map(usuarioGuardar, Usuario.class);
-        if (usuario.getRol() == null || usuario.getRol().isBlank()) {
-            usuario.setRol("CLIENTE");
-        }
+        Usuario usuario = new Usuario();
+        usuario.setNombre(usuarioGuardar.getNombre());
+        usuario.setCorreo(usuarioGuardar.getCorreo());
+        usuario.setTelefono(usuarioGuardar.getTelefono());
         usuario.setActivo(true);
-        if ("ADMIN".equalsIgnoreCase(usuario.getRol())) {
-            usuario.setIdRol(1);
-        } else {
-            usuario.setIdRol(2);
-        }
+        usuario.setRol(obtenerRol(usuarioGuardar.getRol()));
         if (usuarioGuardar.getContrasena() != null && !usuarioGuardar.getContrasena().isBlank()) {
             usuario.setContrasena(passwordEncoder.encode(usuarioGuardar.getContrasena()));
         }
@@ -92,7 +92,7 @@ public class UsuarioService implements IUsuarioService {
             usuario.setContrasena(passwordEncoder.encode(usuarioModificar.getContrasena()));
         }
         if (usuarioModificar.getRol() != null) {
-            usuario.setRol(usuarioModificar.getRol());
+            usuario.setRol(obtenerRol(usuarioModificar.getRol()));
         }
         if (usuarioModificar.getActivo() != null) {
             usuario.setActivo(usuarioModificar.getActivo());
@@ -104,5 +104,13 @@ public class UsuarioService implements IUsuarioService {
     @Override
     public void eliminarPorId(Integer id) {
         usuarioRepository.deleteById(id);
+    }
+
+    private Rol obtenerRol(String nombreRol) {
+        String nombre = (nombreRol == null || nombreRol.isBlank())
+                ? "CLIENTE"
+                : org.esfe.seguridad.RolNormalizador.normalizar(nombreRol);
+        return rolRepository.findByNombreIgnoreCase(nombre).orElseGet(() ->
+                rolRepository.findByNombreIgnoreCase("CLIENTE").orElseThrow());
     }
 }

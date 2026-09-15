@@ -5,15 +5,17 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Getter
 @Setter
 @Entity
-@Table(name = "camisas")
+@Table(name = "productos")
 public class Camisa {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_producto")
     private Integer id;
 
     private String nombre;
@@ -22,19 +24,22 @@ public class Camisa {
 
     private BigDecimal precio;
 
-    private Integer stock;
-
-    private String imagenUrl;
-
-    private String talla;
-
-    private String color;
+    private Boolean estado;
 
     @ManyToOne
-    @JoinColumn(name = "categoria_id")
+    @JoinColumn(name = "id_categoria")
     private Categoria categoria;
 
     @ManyToOne
-    @JoinColumn(name = "marca_id")
+    @JoinColumn(name = "id_marca")
     private Marca marca;
+
+    @OneToMany(mappedBy = "producto", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ProductoTalla> productoTallas;
+
+    @OneToMany(mappedBy = "producto", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ProductoColor> productoColores;
+
+    @OneToMany(mappedBy = "producto", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ImagenProducto> imagenes;
 }

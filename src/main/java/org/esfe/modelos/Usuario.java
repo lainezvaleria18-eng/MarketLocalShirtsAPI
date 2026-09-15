@@ -21,12 +21,13 @@ public class Usuario {
 
     private String telefono;
 
+    @Column(name = "password_hash", nullable = false)
     private String contrasena;
 
-    private String rol;
-
+    @Column(name = "estado")
     private Boolean activo;
 
-    @Column(name = "id_rol")
-    private Integer idRol;
+    @ManyToOne(optional = false, fetch = FetchType.EAGER)
+    @JoinColumn(name = "id_rol", nullable = false)
+    private Rol rol;
 }

@@ -52,6 +52,7 @@ public class CategoriaService implements ICategoriaService {
     @Override
     public CategoriaSalida crear(CategoriaGuardar categoriaGuardar) {
         Categoria categoria = modelMapper.map(categoriaGuardar, Categoria.class);
+        categoria.setEstado(true);
         categoria = categoriaRepository.save(categoria);
         return modelMapper.map(categoria, CategoriaSalida.class);
     }

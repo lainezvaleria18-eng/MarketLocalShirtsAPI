@@ -10,25 +10,32 @@ import java.math.BigDecimal;
 @Getter
 @Setter
 @Entity
-@Table(name = "detalles_pedido")
+@Table(name = "detalle_pedidos")
 public class DetallePedido {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_detalle")
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "pedido_id")
+    @JoinColumn(name = "id_pedido")
     @JsonIgnore
     private Pedido pedido;
 
     @ManyToOne
-    @JoinColumn(name = "camisa_id")
+    @JoinColumn(name = "id_producto")
     private Camisa camisa;
+
+    @ManyToOne
+    @JoinColumn(name = "id_talla")
+    private Talla talla;
 
     private Integer cantidad;
 
+    @Column(name = "precio_unitario")
     private BigDecimal precioUnitario;
 
+    @Column(name = "subtotal_linea")
     private BigDecimal subtotal;
 }

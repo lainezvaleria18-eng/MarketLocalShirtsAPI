@@ -22,6 +22,8 @@ public class Marca {
 
     private String descripcion;
 
+    private Boolean estado;
+
     @OneToMany(mappedBy = "marca")
     @JsonIgnore
     private List<Camisa> camisas;

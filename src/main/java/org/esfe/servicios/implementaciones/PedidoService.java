@@ -6,10 +6,14 @@ import org.esfe.dtos.pedido.PedidoModificar;
 import org.esfe.dtos.pedido.PedidoSalida;
 import org.esfe.modelos.Camisa;
 import org.esfe.modelos.DetallePedido;
+import org.esfe.modelos.EstadoPedido;
 import org.esfe.modelos.Pedido;
+import org.esfe.modelos.ProductoTalla;
 import org.esfe.modelos.Usuario;
 import org.esfe.repositorios.ICamisaRepository;
+import org.esfe.repositorios.IEstadoPedidoRepository;
 import org.esfe.repositorios.IPedidoRepository;
+import org.esfe.repositorios.IProductoTallaRepository;
 import org.esfe.repositorios.IUsuarioRepository;
 import org.esfe.servicios.interfaces.IPedidoService;
 import org.modelmapper.ModelMapper;
@@ -29,6 +33,8 @@ import java.util.stream.Collectors;
 @Service
 public class PedidoService implements IPedidoService {
 
+    private static final BigDecimal IVA = new BigDecimal("0.13");
+
     @Autowired
     private IPedidoRepository pedidoRepository;
 
@@ -37,6 +43,12 @@ public class PedidoService implements IPedidoService {
 
     @Autowired
     private ICamisaRepository camisaRepository;
+
+    @Autowired
+    private IProductoTallaRepository productoTallaRepository;
+
+    @Autowired
+    private IEstadoPedidoRepository estadoPedidoRepository;
 
     @Autowired
     private ModelMapper modelMapper;
@@ -75,41 +87,52 @@ public class PedidoService implements IPedidoService {
     @Transactional
     public PedidoSalida crear(PedidoGuardar pedidoGuardar) {
         Usuario usuario = usuarioRepository.findById(pedidoGuardar.getUsuarioId()).orElse(null);
-        if (usuario == null || pedidoGuardar.getDetalles() == null || pedidoGuardar.getDetalles().isEmpty()) {
+        EstadoPedido estado = estadoPedidoRepository.findByNombreIgnoreCase("CONFIRMADO").orElse(null);
+        if (usuario == null || estado == null || pedidoGuardar.getDetalles() == null || pedidoGuardar.getDetalles().isEmpty()) {
             return null;
         }
 
         Pedido pedido = new Pedido();
         pedido.setUsuario(usuario);
         pedido.setFecha(LocalDateTime.now());
-        pedido.setEstado("CONFIRMADO");
+        pedido.setEstadoPedido(estado);
         pedido.setDetalles(new ArrayList<>());
 
-        BigDecimal total = BigDecimal.ZERO;
+        BigDecimal subtotal = BigDecimal.ZERO;
         for (DetallePedidoGuardar detalleGuardar : pedidoGuardar.getDetalles()) {
             Camisa camisa = camisaRepository.findById(detalleGuardar.getCamisaId()).orElse(null);
             if (camisa == null || detalleGuardar.getCantidad() == null || detalleGuardar.getCantidad() <= 0) {
                 return null;
             }
-            if (camisa.getStock() == null || camisa.getStock() < detalleGuardar.getCantidad()) {
+
+            List<ProductoTalla> tallas = productoTallaRepository.findByProductoId(camisa.getId());
+            if (tallas.isEmpty()) {
+                return null;
+            }
+            ProductoTalla productoTalla = tallas.get(0);
+            if (productoTalla.getStock() == null || productoTalla.getStock() < detalleGuardar.getCantidad()) {
                 return null;
             }
 
-            camisa.setStock(camisa.getStock() - detalleGuardar.getCantidad());
-            camisaRepository.save(camisa);
+            productoTalla.setStock(productoTalla.getStock() - detalleGuardar.getCantidad());
+            productoTallaRepository.save(productoTalla);
 
-            BigDecimal subtotal = camisa.getPrecio().multiply(BigDecimal.valueOf(detalleGuardar.getCantidad()));
+            BigDecimal linea = camisa.getPrecio().multiply(BigDecimal.valueOf(detalleGuardar.getCantidad()));
             DetallePedido detalle = new DetallePedido();
             detalle.setPedido(pedido);
             detalle.setCamisa(camisa);
+            detalle.setTalla(productoTalla.getTalla());
             detalle.setCantidad(detalleGuardar.getCantidad());
             detalle.setPrecioUnitario(camisa.getPrecio());
-            detalle.setSubtotal(subtotal);
+            detalle.setSubtotal(linea);
             pedido.getDetalles().add(detalle);
-            total = total.add(subtotal);
+            subtotal = subtotal.add(linea);
         }
 
-        pedido.setTotal(total);
+        BigDecimal iva = subtotal.multiply(IVA);
+        pedido.setSubtotal(subtotal);
+        pedido.setIva(iva);
+        pedido.setTotal(subtotal.add(iva));
         pedido = pedidoRepository.save(pedido);
         return modelMapper.map(pedido, PedidoSalida.class);
     }
@@ -120,7 +143,8 @@ public class PedidoService implements IPedidoService {
         if (pedido == null) {
             return null;
         }
-        pedido.setEstado(pedidoModificar.getEstado());
+        estadoPedidoRepository.findByNombreIgnoreCase(pedidoModificar.getEstado())
+                .ifPresent(pedido::setEstadoPedido);
         pedido = pedidoRepository.save(pedido);
         return modelMapper.map(pedido, PedidoSalida.class);
     }

@@ -22,10 +22,13 @@ public class JwtUtil {
 
     public String generarToken(Usuario usuario) {
         Date ahora = new Date();
+        String rol = usuario.getRol() != null
+                ? RolNormalizador.normalizar(usuario.getRol().getNombre())
+                : "CLIENTE";
         return Jwts.builder()
                 .subject(usuario.getCorreo())
                 .claim("id", usuario.getId())
-                .claim("rol", usuario.getRol())
+                .claim("rol", rol)
                 .issuedAt(ahora)
                 .expiration(new Date(ahora.getTime() + expiration))
                 .signWith(obtenerLlave())
@@ -34,6 +37,11 @@ public class JwtUtil {
 
     public String extraerCorreo(String token) {
         return extraerClaims(token).getSubject();
+    }
+
+    public String extraerRol(String token) {
+        Object rol = extraerClaims(token).get("rol");
+        return RolNormalizador.normalizar(rol == null ? null : rol.toString());
     }
 
     public boolean validarToken(String token) {

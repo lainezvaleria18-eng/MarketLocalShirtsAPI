@@ -1,5 +1,6 @@
 package org.esfe.controladores;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import org.esfe.dtos.auth.LoginGuardar;
 import org.esfe.dtos.auth.LoginSalida;
 import org.esfe.dtos.usuario.UsuarioGuardar;
@@ -22,6 +23,7 @@ public class AuthController {
     @Autowired
     private IUsuarioService usuarioService;
 
+    @SecurityRequirements
     @PostMapping("/login")
     public ResponseEntity<LoginSalida> iniciarSesion(@RequestBody LoginGuardar loginGuardar) {
         LoginSalida login = authService.iniciarSesion(loginGuardar);
@@ -31,6 +33,7 @@ public class AuthController {
         return new ResponseEntity<>(login, HttpStatus.OK);
     }
 
+    @SecurityRequirements
     @PostMapping("/registrar")
     public ResponseEntity<UsuarioSalida> registrar(@RequestBody UsuarioGuardar usuarioGuardar) {
         UsuarioSalida usuario = authService.registrar(usuarioGuardar);

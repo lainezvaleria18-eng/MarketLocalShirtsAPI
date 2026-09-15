@@ -25,9 +25,15 @@ public class Pedido {
 
     private LocalDateTime fecha;
 
+    private BigDecimal subtotal;
+
+    private BigDecimal iva;
+
     private BigDecimal total;
 
-    private String estado;
+    @ManyToOne
+    @JoinColumn(name = "id_estado")
+    private EstadoPedido estadoPedido;
 
     @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<DetallePedido> detalles;
