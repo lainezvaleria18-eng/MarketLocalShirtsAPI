@@ -3,7 +3,7 @@ package org.esfe.config;
 import org.esfe.dtos.pedido.PedidoSalida;
 import org.esfe.dtos.usuario.UsuarioSalida;
 import org.esfe.modelos.Pedido;
-import org.esfe.modelos.Usuario;
+import org.esfe.seguridad.modelos.Usuario;
 import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
@@ -26,9 +26,7 @@ public class ModelMapperConfig {
             salida.setCorreo(origen.getCorreo());
             salida.setTelefono(origen.getTelefono());
             salida.setActivo(origen.getActivo());
-            salida.setRol(origen.getRol() != null
-                    ? org.esfe.seguridad.RolNormalizador.normalizar(origen.getRol().getNombre())
-                    : "CLIENTE");
+            salida.setRol(origen.getRol() != null ? origen.getRol().getNombre() : "CLIENTE");
             return salida;
         };
         modelMapper.createTypeMap(Usuario.class, UsuarioSalida.class).setConverter(usuarioConverter);

@@ -1,19 +1,25 @@
-package org.esfe.modelos;
+package org.esfe.seguridad.modelos;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
+
+import java.util.List;
 
 @Getter
 @Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "roles")
 public class Rol {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_rol")
     private Integer id;
 
     private String nombre;
+
+    @OneToMany(mappedBy = "rol")
+    private List<Usuario> usuarios;
 }

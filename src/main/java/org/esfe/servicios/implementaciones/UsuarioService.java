@@ -3,10 +3,10 @@ package org.esfe.servicios.implementaciones;
 import org.esfe.dtos.usuario.UsuarioGuardar;
 import org.esfe.dtos.usuario.UsuarioModificar;
 import org.esfe.dtos.usuario.UsuarioSalida;
-import org.esfe.modelos.Rol;
-import org.esfe.modelos.Usuario;
-import org.esfe.repositorios.IRolRepository;
-import org.esfe.repositorios.IUsuarioRepository;
+import org.esfe.seguridad.modelos.Rol;
+import org.esfe.seguridad.modelos.Usuario;
+import org.esfe.seguridad.repositorios.RolRepository;
+import org.esfe.seguridad.repositorios.UsuarioRepository;
 import org.esfe.servicios.interfaces.IUsuarioService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,16 +17,15 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
-@Service
+@Service("usuarioAdministracionService")
 public class UsuarioService implements IUsuarioService {
 
     @Autowired
-    private IUsuarioRepository usuarioRepository;
+    private UsuarioRepository usuarioRepository;
 
     @Autowired
-    private IRolRepository rolRepository;
+    private RolRepository rolRepository;
 
     @Autowired
     private ModelMapper modelMapper;
@@ -36,17 +35,18 @@ public class UsuarioService implements IUsuarioService {
 
     @Override
     public List<UsuarioSalida> obtenerTodos() {
-        return usuarioRepository.findAll().stream()
+        List<Usuario> usuarios = usuarioRepository.findAll();
+        return usuarios.stream()
                 .map(usuario -> modelMapper.map(usuario, UsuarioSalida.class))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override
     public Page<UsuarioSalida> obtenerTodosPaginados(Pageable pageable) {
         Page<Usuario> page = usuarioRepository.findAll(pageable);
-        List<UsuarioSalida> usuariosDto = page.getContent().stream()
+        List<UsuarioSalida> usuariosDto = page.stream()
                 .map(usuario -> modelMapper.map(usuario, UsuarioSalida.class))
-                .collect(Collectors.toList());
+                .toList();
         return new PageImpl<>(usuariosDto, page.getPageable(), page.getTotalElements());
     }
 
@@ -66,15 +66,16 @@ public class UsuarioService implements IUsuarioService {
 
     @Override
     public UsuarioSalida crear(UsuarioGuardar usuarioGuardar) {
-        Usuario usuario = new Usuario();
-        usuario.setNombre(usuarioGuardar.getNombre());
-        usuario.setCorreo(usuarioGuardar.getCorreo());
-        usuario.setTelefono(usuarioGuardar.getTelefono());
-        usuario.setActivo(true);
-        usuario.setRol(obtenerRol(usuarioGuardar.getRol()));
-        if (usuarioGuardar.getContrasena() != null && !usuarioGuardar.getContrasena().isBlank()) {
-            usuario.setContrasena(passwordEncoder.encode(usuarioGuardar.getContrasena()));
-        }
+        Usuario usuario = Usuario.builder()
+                .nombre(usuarioGuardar.getNombre())
+                .correo(usuarioGuardar.getCorreo())
+                .telefono(usuarioGuardar.getTelefono())
+                .activo(true)
+                .rol(obtenerRol(usuarioGuardar.getRol()))
+                .clave(usuarioGuardar.getContrasena() != null && !usuarioGuardar.getContrasena().isBlank()
+                        ? passwordEncoder.encode(usuarioGuardar.getContrasena())
+                        : null)
+                .build();
         usuario = usuarioRepository.save(usuario);
         return modelMapper.map(usuario, UsuarioSalida.class);
     }
@@ -89,7 +90,7 @@ public class UsuarioService implements IUsuarioService {
         usuario.setCorreo(usuarioModificar.getCorreo());
         usuario.setTelefono(usuarioModificar.getTelefono());
         if (usuarioModificar.getContrasena() != null && !usuarioModificar.getContrasena().isBlank()) {
-            usuario.setContrasena(passwordEncoder.encode(usuarioModificar.getContrasena()));
+            usuario.setClave(passwordEncoder.encode(usuarioModificar.getContrasena()));
         }
         if (usuarioModificar.getRol() != null) {
             usuario.setRol(obtenerRol(usuarioModificar.getRol()));
@@ -107,9 +108,7 @@ public class UsuarioService implements IUsuarioService {
     }
 
     private Rol obtenerRol(String nombreRol) {
-        String nombre = (nombreRol == null || nombreRol.isBlank())
-                ? "CLIENTE"
-                : org.esfe.seguridad.RolNormalizador.normalizar(nombreRol);
+        String nombre = (nombreRol == null || nombreRol.isBlank()) ? "CLIENTE" : nombreRol;
         return rolRepository.findByNombreIgnoreCase(nombre).orElseGet(() ->
                 rolRepository.findByNombreIgnoreCase("CLIENTE").orElseThrow());
     }

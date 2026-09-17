@@ -1,9 +1,9 @@
 package org.esfe.config;
 
 import org.esfe.modelos.EstadoPedido;
-import org.esfe.modelos.Rol;
 import org.esfe.repositorios.IEstadoPedidoRepository;
-import org.esfe.repositorios.IRolRepository;
+import org.esfe.seguridad.modelos.Rol;
+import org.esfe.seguridad.repositorios.RolRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 public class DatosIniciales implements CommandLineRunner {
 
     @Autowired
-    private IRolRepository rolRepository;
+    private RolRepository rolRepository;
 
     @Autowired
     private IEstadoPedidoRepository estadoPedidoRepository;

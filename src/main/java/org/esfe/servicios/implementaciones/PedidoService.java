@@ -9,12 +9,12 @@ import org.esfe.modelos.DetallePedido;
 import org.esfe.modelos.EstadoPedido;
 import org.esfe.modelos.Pedido;
 import org.esfe.modelos.ProductoTalla;
-import org.esfe.modelos.Usuario;
 import org.esfe.repositorios.ICamisaRepository;
 import org.esfe.repositorios.IEstadoPedidoRepository;
 import org.esfe.repositorios.IPedidoRepository;
 import org.esfe.repositorios.IProductoTallaRepository;
-import org.esfe.repositorios.IUsuarioRepository;
+import org.esfe.seguridad.modelos.Usuario;
+import org.esfe.seguridad.repositorios.UsuarioRepository;
 import org.esfe.servicios.interfaces.IPedidoService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +39,7 @@ public class PedidoService implements IPedidoService {
     private IPedidoRepository pedidoRepository;
 
     @Autowired
-    private IUsuarioRepository usuarioRepository;
+    private UsuarioRepository usuarioRepository;
 
     @Autowired
     private ICamisaRepository camisaRepository;

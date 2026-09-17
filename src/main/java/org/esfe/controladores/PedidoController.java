@@ -9,7 +9,6 @@ import org.esfe.servicios.interfaces.IUsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +18,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/pedidos")
 public class PedidoController {
-
     @Autowired
     private IPedidoService pedidoService;
 
@@ -27,77 +25,72 @@ public class PedidoController {
     private IUsuarioService usuarioService;
 
     @GetMapping
-    public ResponseEntity<List<PedidoSalida>> mostrarTodos() {
-        List<PedidoSalida> pedidos = pedidoService.obtenerTodos();
-        if (pedidos.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        }
-        return new ResponseEntity<>(pedidos, HttpStatus.OK);
-    }
-
-    @GetMapping("/paginado")
     public ResponseEntity<Page<PedidoSalida>> mostrarTodosPaginados(Pageable pageable) {
         Page<PedidoSalida> pedidos = pedidoService.obtenerTodosPaginados(pageable);
-        if (pedidos.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        }
-        return new ResponseEntity<>(pedidos, HttpStatus.OK);
+        if (pedidos.hasContent())
+            return ResponseEntity.ok(pedidos);
+        return ResponseEntity.notFound().build();
+    }
+
+    @GetMapping("/lista")
+    public ResponseEntity<List<PedidoSalida>> mostrarTodos() {
+        List<PedidoSalida> pedidos = pedidoService.obtenerTodos();
+        if (!pedidos.isEmpty())
+            return ResponseEntity.ok(pedidos);
+        return ResponseEntity.notFound().build();
     }
 
     @GetMapping("/usuario/{usuarioId}")
-    public ResponseEntity<List<PedidoSalida>> mostrarPorUsuario(@PathVariable Integer usuarioId, Authentication authentication) {
+    public ResponseEntity<List<PedidoSalida>> mostrarPorUsuario(@PathVariable Integer usuarioId,
+                                                               Authentication authentication) {
         if (!esAdmin(authentication)) {
             UsuarioSalida actual = usuarioService.obtenerPorCorreo(authentication.getName());
-            if (actual == null || !actual.getId().equals(usuarioId)) {
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-            }
+            if (actual == null || !actual.getId().equals(usuarioId))
+                return ResponseEntity.notFound().build();
         }
         List<PedidoSalida> pedidos = pedidoService.obtenerPorUsuario(usuarioId);
-        if (pedidos.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        }
-        return new ResponseEntity<>(pedidos, HttpStatus.OK);
+        if (!pedidos.isEmpty())
+            return ResponseEntity.ok(pedidos);
+        return ResponseEntity.notFound().build();
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<PedidoSalida> mostrarPorId(@PathVariable Integer id) {
         PedidoSalida pedido = pedidoService.obtenerPorId(id);
-        if (pedido == null) {
-            return ResponseEntity.notFound().build();
-        }
-        return new ResponseEntity<>(pedido, HttpStatus.OK);
+        if (pedido != null)
+            return ResponseEntity.ok(pedido);
+        return ResponseEntity.notFound().build();
     }
 
     @PostMapping
-    public ResponseEntity<PedidoSalida> crear(@RequestBody PedidoGuardar pedidoGuardar, Authentication authentication) {
+    public ResponseEntity<PedidoSalida> crear(@RequestBody PedidoGuardar pedidoGuardar,
+                                             Authentication authentication) {
         if (!esAdmin(authentication)) {
             UsuarioSalida actual = usuarioService.obtenerPorCorreo(authentication.getName());
-            if (actual == null) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-            }
+            if (actual == null)
+                return ResponseEntity.notFound().build();
             pedidoGuardar.setUsuarioId(actual.getId());
         }
         PedidoSalida pedido = pedidoService.crear(pedidoGuardar);
-        if (pedido == null) {
-            return ResponseEntity.badRequest().build();
-        }
-        return new ResponseEntity<>(pedido, HttpStatus.CREATED);
+        if (pedido != null)
+            return ResponseEntity.ok(pedido);
+        return ResponseEntity.notFound().build();
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<PedidoSalida> editar(@PathVariable Integer id, @RequestBody PedidoModificar pedidoModificar) {
+    public ResponseEntity<PedidoSalida> editar(@PathVariable Integer id,
+                                              @RequestBody PedidoModificar pedidoModificar) {
         pedidoModificar.setId(id);
         PedidoSalida pedido = pedidoService.editar(pedidoModificar);
-        if (pedido == null) {
-            return ResponseEntity.notFound().build();
-        }
-        return new ResponseEntity<>(pedido, HttpStatus.OK);
+        if (pedido != null)
+            return ResponseEntity.ok(pedido);
+        return ResponseEntity.notFound().build();
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminar(@PathVariable Integer id) {
+    public ResponseEntity eliminar(@PathVariable Integer id) {
         pedidoService.eliminarPorId(id);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok("Pedido eliminado correctamente");
     }
 
     private boolean esAdmin(Authentication authentication) {
