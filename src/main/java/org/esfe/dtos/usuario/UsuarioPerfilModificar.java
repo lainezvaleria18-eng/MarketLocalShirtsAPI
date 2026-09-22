@@ -10,9 +10,7 @@ import java.io.Serializable;
 
 @Getter
 @Setter
-public class UsuarioModificar implements Serializable {
-    private Integer id;
-
+public class UsuarioPerfilModificar implements Serializable {
     @NotBlank(message = "El nombre es obligatorio")
     @Size(max = 100, message = "El nombre no debe superar 100 caracteres")
     private String nombre;
@@ -21,12 +19,7 @@ public class UsuarioModificar implements Serializable {
     @Email(message = "El correo no es valido")
     private String correo;
 
+    @NotBlank(message = "El telefono es obligatorio")
     @Size(max = 20, message = "El telefono no debe superar 20 caracteres")
     private String telefono;
-
-    @Size(min = 6, message = "La contrasena debe tener al menos 6 caracteres")
-    private String contrasena;
-
-    private String rol;
-    private Boolean activo;
 }

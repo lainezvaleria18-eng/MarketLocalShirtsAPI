@@ -15,6 +15,7 @@ import org.esfe.repositorios.IPedidoRepository;
 import org.esfe.repositorios.IProductoTallaRepository;
 import org.esfe.seguridad.modelos.Usuario;
 import org.esfe.seguridad.repositorios.UsuarioRepository;
+import org.esfe.servicios.StockInsuficienteException;
 import org.esfe.servicios.interfaces.IPedidoService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -86,11 +87,14 @@ public class PedidoService implements IPedidoService {
     @Override
     @Transactional
     public PedidoSalida crear(PedidoGuardar pedidoGuardar) {
-        Usuario usuario = usuarioRepository.findById(pedidoGuardar.getUsuarioId()).orElse(null);
-        EstadoPedido estado = estadoPedidoRepository.findByNombreIgnoreCase("CONFIRMADO").orElse(null);
-        if (usuario == null || estado == null || pedidoGuardar.getDetalles() == null || pedidoGuardar.getDetalles().isEmpty()) {
-            return null;
+        if (pedidoGuardar.getUsuarioId() == null) {
+            throw new IllegalArgumentException("El usuario del pedido es obligatorio");
         }
+
+        Usuario usuario = usuarioRepository.findById(pedidoGuardar.getUsuarioId())
+                .orElseThrow(() -> new IllegalArgumentException("El usuario no existe"));
+        EstadoPedido estado = estadoPedidoRepository.findByNombreIgnoreCase("CONFIRMADO")
+                .orElseThrow(() -> new IllegalArgumentException("No existe el estado CONFIRMADO"));
 
         Pedido pedido = new Pedido();
         pedido.setUsuario(usuario);
@@ -100,29 +104,34 @@ public class PedidoService implements IPedidoService {
 
         BigDecimal subtotal = BigDecimal.ZERO;
         for (DetallePedidoGuardar detalleGuardar : pedidoGuardar.getDetalles()) {
-            Camisa camisa = camisaRepository.findById(detalleGuardar.getCamisaId()).orElse(null);
-            if (camisa == null || detalleGuardar.getCantidad() == null || detalleGuardar.getCantidad() <= 0) {
-                return null;
-            }
+            Camisa camisa = camisaRepository.findById(detalleGuardar.getCamisaId())
+                    .orElseThrow(() -> new IllegalArgumentException(
+                            "La camisa " + detalleGuardar.getCamisaId() + " no existe"));
 
             List<ProductoTalla> tallas = productoTallaRepository.findByProductoId(camisa.getId());
             if (tallas.isEmpty()) {
-                return null;
-            }
-            ProductoTalla productoTalla = tallas.get(0);
-            if (productoTalla.getStock() == null || productoTalla.getStock() < detalleGuardar.getCantidad()) {
-                return null;
+                throw new StockInsuficienteException(
+                        "La camisa '" + camisa.getNombre() + "' no tiene stock registrado");
             }
 
-            productoTalla.setStock(productoTalla.getStock() - detalleGuardar.getCantidad());
+            ProductoTalla productoTalla = tallas.get(0);
+            int stockActual = productoTalla.getStock() == null ? 0 : productoTalla.getStock();
+            int cantidad = detalleGuardar.getCantidad();
+            if (stockActual < cantidad) {
+                throw new StockInsuficienteException(
+                        "Stock insuficiente para '" + camisa.getNombre()
+                                + "'. Disponible: " + stockActual + ", solicitado: " + cantidad);
+            }
+
+            productoTalla.setStock(stockActual - cantidad);
             productoTallaRepository.save(productoTalla);
 
-            BigDecimal linea = camisa.getPrecio().multiply(BigDecimal.valueOf(detalleGuardar.getCantidad()));
+            BigDecimal linea = camisa.getPrecio().multiply(BigDecimal.valueOf(cantidad));
             DetallePedido detalle = new DetallePedido();
             detalle.setPedido(pedido);
             detalle.setCamisa(camisa);
             detalle.setTalla(productoTalla.getTalla());
-            detalle.setCantidad(detalleGuardar.getCantidad());
+            detalle.setCantidad(cantidad);
             detalle.setPrecioUnitario(camisa.getPrecio());
             detalle.setSubtotal(linea);
             pedido.getDetalles().add(detalle);

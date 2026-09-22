@@ -41,6 +41,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/camisas/**", "/api/categorias/**", "/api/marcas/**").hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/camisas/**", "/api/categorias/**", "/api/marcas/**").hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/camisas/**", "/api/categorias/**", "/api/marcas/**").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/usuarios/perfil").hasAuthority("CLIENTE")
+                        .requestMatchers(HttpMethod.PUT, "/api/usuarios/perfil").hasAuthority("CLIENTE")
                         .requestMatchers("/api/usuarios/**").hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/api/pedidos").hasAnyAuthority("ADMIN", "CLIENTE")
                         .requestMatchers(HttpMethod.GET, "/api/pedidos/usuario/**").hasAnyAuthority("ADMIN", "CLIENTE")

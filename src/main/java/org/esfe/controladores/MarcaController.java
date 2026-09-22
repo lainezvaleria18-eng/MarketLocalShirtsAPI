@@ -10,6 +10,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import jakarta.validation.Valid;
+
 import java.util.List;
 
 @RestController
@@ -43,7 +45,7 @@ public class MarcaController {
     }
 
     @PostMapping
-    public ResponseEntity<MarcaSalida> crear(@RequestBody MarcaGuardar marcaGuardar) {
+    public ResponseEntity<MarcaSalida> crear(@Valid @RequestBody MarcaGuardar marcaGuardar) {
         MarcaSalida marca = marcaService.crear(marcaGuardar);
         if (marca != null)
             return ResponseEntity.ok(marca);
@@ -51,7 +53,7 @@ public class MarcaController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<MarcaSalida> editar(@PathVariable Integer id, @RequestBody MarcaModificar marcaModificar) {
+    public ResponseEntity<MarcaSalida> editar(@PathVariable Integer id, @Valid @RequestBody MarcaModificar marcaModificar) {
         marcaModificar.setId(id);
         MarcaSalida marca = marcaService.editar(marcaModificar);
         if (marca != null)
