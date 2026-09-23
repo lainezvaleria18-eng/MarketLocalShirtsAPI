@@ -68,6 +68,9 @@ public class UsuarioService implements IUsuarioService {
 
     @Override
     public UsuarioSalida crear(UsuarioGuardar usuarioGuardar) {
+        if (usuarioRepository.findByCorreo(usuarioGuardar.getCorreo().trim()).isPresent()) {
+            throw new IllegalArgumentException("El correo ya esta registrado");
+        }
         Usuario usuario = Usuario.builder()
                 .nombre(usuarioGuardar.getNombre())
                 .correo(usuarioGuardar.getCorreo())
@@ -88,8 +91,14 @@ public class UsuarioService implements IUsuarioService {
         if (usuario == null) {
             return null;
         }
+        Integer usuarioId = usuario.getId();
+        usuarioRepository.findByCorreo(usuarioModificar.getCorreo().trim())
+                .filter(existente -> !existente.getId().equals(usuarioId))
+                .ifPresent(existente -> {
+                    throw new IllegalArgumentException("El correo ya esta registrado por otro usuario");
+                });
         usuario.setNombre(usuarioModificar.getNombre());
-        usuario.setCorreo(usuarioModificar.getCorreo());
+        usuario.setCorreo(usuarioModificar.getCorreo().trim());
         usuario.setTelefono(usuarioModificar.getTelefono());
         if (usuarioModificar.getContrasena() != null && !usuarioModificar.getContrasena().isBlank()) {
             usuario.setClave(passwordEncoder.encode(usuarioModificar.getContrasena()));

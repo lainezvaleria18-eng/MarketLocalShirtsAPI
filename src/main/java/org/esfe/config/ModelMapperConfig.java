@@ -1,7 +1,11 @@
 package org.esfe.config;
 
+import org.esfe.dtos.camisa.CamisaSalida;
+import org.esfe.dtos.pedido.DetallePedidoSalida;
 import org.esfe.dtos.pedido.PedidoSalida;
 import org.esfe.dtos.usuario.UsuarioSalida;
+import org.esfe.modelos.Camisa;
+import org.esfe.modelos.DetallePedido;
 import org.esfe.modelos.Pedido;
 import org.esfe.seguridad.modelos.Usuario;
 import org.modelmapper.Converter;
@@ -31,6 +35,16 @@ public class ModelMapperConfig {
         };
         modelMapper.createTypeMap(Usuario.class, UsuarioSalida.class).setConverter(usuarioConverter);
 
+        modelMapper.createTypeMap(Camisa.class, CamisaSalida.class)
+                .addMappings(mapper -> {
+                    mapper.skip(CamisaSalida::setTalla);
+                    mapper.skip(CamisaSalida::setTallas);
+                    mapper.skip(CamisaSalida::setStock);
+                    mapper.skip(CamisaSalida::setAgotado);
+                    mapper.skip(CamisaSalida::setColor);
+                    mapper.skip(CamisaSalida::setImagenUrl);
+                });
+
         Converter<Pedido, PedidoSalida> pedidoConverter = ctx -> {
             Pedido origen = ctx.getSource();
             if (origen == null) {
@@ -48,7 +62,7 @@ public class ModelMapperConfig {
             }
             if (origen.getDetalles() != null) {
                 salida.setDetalles(origen.getDetalles().stream()
-                        .map(detalle -> modelMapper.map(detalle, org.esfe.dtos.pedido.DetallePedidoSalida.class))
+                        .map(detalle -> mapearDetalle(modelMapper, detalle))
                         .toList());
             }
             return salida;
@@ -56,5 +70,18 @@ public class ModelMapperConfig {
         modelMapper.createTypeMap(Pedido.class, PedidoSalida.class).setConverter(pedidoConverter);
 
         return modelMapper;
+    }
+
+    private DetallePedidoSalida mapearDetalle(ModelMapper modelMapper, DetallePedido detalle) {
+        DetallePedidoSalida linea = new DetallePedidoSalida();
+        linea.setId(detalle.getId());
+        linea.setCantidad(detalle.getCantidad());
+        linea.setPrecioUnitario(detalle.getPrecioUnitario());
+        linea.setSubtotal(detalle.getSubtotal());
+        linea.setTalla(detalle.getTalla() != null ? detalle.getTalla().getNombre() : null);
+        if (detalle.getCamisa() != null) {
+            linea.setCamisa(modelMapper.map(detalle.getCamisa(), CamisaSalida.class));
+        }
+        return linea;
     }
 }

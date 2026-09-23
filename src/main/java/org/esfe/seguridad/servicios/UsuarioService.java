@@ -45,13 +45,18 @@ public class UsuarioService {
     }
 
     public UsuarioToken registro(UsuarioRegistrar registroRequest) {
+        String correo = registroRequest.getLogin().trim();
+        if (userRepository.findByCorreo(correo).isPresent()) {
+            throw new IllegalArgumentException("El correo ya esta registrado");
+        }
+
         Usuario usuario = Usuario.builder()
                 .nombre(registroRequest.getNombre())
                 .telefono(registroRequest.getTelefono())
-                .correo(registroRequest.getLogin())
+                .correo(correo)
                 .clave(passwordEncoder.encode(registroRequest.getClave()))
                 .activo(true)
-                .rol(rolService.obtenerPorId(registroRequest.getRolId()))
+                .rol(rolService.obtenerCliente())
                 .build();
 
         userRepository.save(usuario);

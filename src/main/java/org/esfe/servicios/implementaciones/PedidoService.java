@@ -108,23 +108,22 @@ public class PedidoService implements IPedidoService {
                     .orElseThrow(() -> new IllegalArgumentException(
                             "La camisa " + detalleGuardar.getCamisaId() + " no existe"));
 
-            List<ProductoTalla> tallas = productoTallaRepository.findByProductoId(camisa.getId());
-            if (tallas.isEmpty()) {
-                throw new StockInsuficienteException(
-                        "La camisa '" + camisa.getNombre() + "' no tiene stock registrado");
-            }
+            ProductoTalla productoTalla = productoTallaRepository
+                    .findByProductoIdAndTalla_NombreIgnoreCase(camisa.getId(), detalleGuardar.getTalla().trim())
+                    .orElseThrow(() -> new StockInsuficienteException(
+                            "La camisa '" + camisa.getNombre() + "' no tiene stock en talla "
+                                    + detalleGuardar.getTalla()));
 
-            ProductoTalla productoTalla = tallas.get(0);
             int stockActual = productoTalla.getStock() == null ? 0 : productoTalla.getStock();
             int cantidad = detalleGuardar.getCantidad();
             if (stockActual <= 0) {
                 throw new StockInsuficienteException(
-                        "Producto agotado: '" + camisa.getNombre() + "'");
+                        "Producto agotado: '" + camisa.getNombre() + "' talla " + detalleGuardar.getTalla());
             }
             if (stockActual < cantidad) {
                 throw new StockInsuficienteException(
-                        "Stock insuficiente para '" + camisa.getNombre()
-                                + "'. Disponible: " + stockActual + ", solicitado: " + cantidad);
+                        "Stock insuficiente para '" + camisa.getNombre() + "' talla " + detalleGuardar.getTalla()
+                                + ". Disponible: " + stockActual + ", solicitado: " + cantidad);
             }
 
             productoTalla.setStock(stockActual - cantidad);
@@ -156,8 +155,10 @@ public class PedidoService implements IPedidoService {
         if (pedido == null) {
             return null;
         }
-        estadoPedidoRepository.findByNombreIgnoreCase(pedidoModificar.getEstado())
-                .ifPresent(pedido::setEstadoPedido);
+        EstadoPedido estado = estadoPedidoRepository.findByNombreIgnoreCase(pedidoModificar.getEstado())
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "El estado '" + pedidoModificar.getEstado() + "' no existe"));
+        pedido.setEstadoPedido(estado);
         pedido = pedidoRepository.save(pedido);
         return modelMapper.map(pedido, PedidoSalida.class);
     }

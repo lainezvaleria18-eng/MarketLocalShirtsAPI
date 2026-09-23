@@ -27,11 +27,16 @@ public class CamisaModificar implements Serializable {
     @DecimalMin(value = "0.01", message = "El precio debe ser mayor a 0")
     private BigDecimal precio;
 
+    @NotNull(message = "El stock es obligatorio")
     @Min(value = 0, message = "El stock no puede ser negativo")
     private Integer stock;
 
     private String imagenUrl;
+
+    @NotBlank(message = "La talla es obligatoria")
+    @Size(max = 10, message = "La talla no debe superar 10 caracteres")
     private String talla;
+
     private String color;
 
     @NotNull(message = "La categoria es obligatoria")

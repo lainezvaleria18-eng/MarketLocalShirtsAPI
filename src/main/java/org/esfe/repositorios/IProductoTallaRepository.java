@@ -10,4 +10,6 @@ public interface IProductoTallaRepository extends JpaRepository<ProductoTalla, I
     List<ProductoTalla> findByProductoId(Integer productoId);
 
     Optional<ProductoTalla> findByProductoIdAndTallaId(Integer productoId, Integer tallaId);
+
+    Optional<ProductoTalla> findByProductoIdAndTalla_NombreIgnoreCase(Integer productoId, String nombreTalla);
 }

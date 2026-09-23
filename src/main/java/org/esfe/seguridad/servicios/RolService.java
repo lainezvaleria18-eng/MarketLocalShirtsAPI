@@ -19,4 +19,9 @@ public class RolService {
     public Rol obtenerPorId(Integer id) {
         return rolRepository.findById(id).get();
     }
+
+    public Rol obtenerCliente() {
+        return rolRepository.findByNombreIgnoreCase("CLIENTE")
+                .orElseThrow(() -> new IllegalArgumentException("No existe el rol CLIENTE"));
+    }
 }

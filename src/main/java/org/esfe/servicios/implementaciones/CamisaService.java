@@ -3,6 +3,7 @@ package org.esfe.servicios.implementaciones;
 import org.esfe.dtos.camisa.CamisaGuardar;
 import org.esfe.dtos.camisa.CamisaModificar;
 import org.esfe.dtos.camisa.CamisaSalida;
+import org.esfe.dtos.camisa.TallaStockSalida;
 import org.esfe.modelos.Camisa;
 import org.esfe.modelos.Categoria;
 import org.esfe.modelos.Color;
@@ -182,16 +183,27 @@ public class CamisaService implements ICamisaService {
     private CamisaSalida aSalida(Camisa camisa) {
         CamisaSalida salida = modelMapper.map(camisa, CamisaSalida.class);
         List<ProductoTalla> tallas = productoTallaRepository.findByProductoId(camisa.getId());
-        int stock = 0;
-        if (!tallas.isEmpty()) {
-            ProductoTalla primera = tallas.get(0);
-            stock = primera.getStock() == null ? 0 : primera.getStock();
-            if (primera.getTalla() != null) {
-                salida.setTalla(primera.getTalla().getNombre());
-            }
+        int stockTotal = 0;
+        List<TallaStockSalida> tallasSalida = tallas.stream().map(productoTalla -> {
+            TallaStockSalida item = new TallaStockSalida();
+            String nombreTalla = productoTalla.getTalla() != null ? productoTalla.getTalla().getNombre() : null;
+            int stockTalla = productoTalla.getStock() == null ? 0 : productoTalla.getStock();
+            item.setTalla(nombreTalla);
+            item.setStock(stockTalla);
+            item.setAgotado(stockTalla <= 0);
+            return item;
+        }).collect(Collectors.toList());
+
+        for (TallaStockSalida item : tallasSalida) {
+            stockTotal += item.getStock() == null ? 0 : item.getStock();
         }
-        salida.setStock(stock);
-        salida.setAgotado(stock <= 0);
+
+        salida.setTallas(tallasSalida);
+        if (!tallasSalida.isEmpty()) {
+            salida.setTalla(tallasSalida.get(0).getTalla());
+        }
+        salida.setStock(stockTotal);
+        salida.setAgotado(stockTotal <= 0);
         List<ProductoColor> colores = productoColorRepository.findByProductoId(camisa.getId());
         if (!colores.isEmpty() && colores.get(0).getColor() != null) {
             salida.setColor(colores.get(0).getColor().getNombre());
@@ -205,15 +217,17 @@ public class CamisaService implements ICamisaService {
 
     private Categoria obtenerCategoria(Integer categoriaId) {
         if (categoriaId == null) {
-            return null;
+            throw new IllegalArgumentException("La categoria es obligatoria");
         }
-        return categoriaRepository.findById(categoriaId).orElse(null);
+        return categoriaRepository.findById(categoriaId)
+                .orElseThrow(() -> new IllegalArgumentException("La categoria " + categoriaId + " no existe"));
     }
 
     private Marca obtenerMarca(Integer marcaId) {
         if (marcaId == null) {
-            return null;
+            throw new IllegalArgumentException("La marca es obligatoria");
         }
-        return marcaRepository.findById(marcaId).orElse(null);
+        return marcaRepository.findById(marcaId)
+                .orElseThrow(() -> new IllegalArgumentException("La marca " + marcaId + " no existe"));
     }
 }
