@@ -22,17 +22,17 @@ public class CorreoService {
         SimpleMailMessage mensaje = new SimpleMailMessage();
         mensaje.setFrom(remitente);
         mensaje.setTo(correo);
-        mensaje.setSubject("MarketLocalShirts - Restablecer contrasena");
+        mensaje.setSubject("MarketLocalShirts - Restablecer tu contrasena");
         mensaje.setText(
-                "Recibimos una solicitud para restablecer tu contrasena.\n\n"
-                        + "El enlace es valido por 30 minutos:\n"
+                "Este mensaje lo envia MarketLocalShirts (remitente oficial de la tienda).\n\n"
+                        + "Solicitaste restablecer tu contrasena. El enlace es valido por 30 minutos:\n"
                         + enlace
-                        + "\n\nSi no fuiste tu, ignora este correo."
+                        + "\n\nSi no fuiste tu, ignora este correo. No respondas a este mensaje."
         );
         try {
             mailSender.send(mensaje);
         } catch (Exception ex) {
-            throw new IllegalArgumentException("No se pudo enviar el correo. Revise usuario y contrasena de aplicacion de Gmail");
+            throw new IllegalArgumentException("No se pudo enviar el correo desde la cuenta oficial del servidor");
         }
     }
 }

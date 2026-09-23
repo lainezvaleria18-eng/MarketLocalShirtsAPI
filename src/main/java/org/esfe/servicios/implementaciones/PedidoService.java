@@ -117,6 +117,10 @@ public class PedidoService implements IPedidoService {
             ProductoTalla productoTalla = tallas.get(0);
             int stockActual = productoTalla.getStock() == null ? 0 : productoTalla.getStock();
             int cantidad = detalleGuardar.getCantidad();
+            if (stockActual <= 0) {
+                throw new StockInsuficienteException(
+                        "Producto agotado: '" + camisa.getNombre() + "'");
+            }
             if (stockActual < cantidad) {
                 throw new StockInsuficienteException(
                         "Stock insuficiente para '" + camisa.getNombre()

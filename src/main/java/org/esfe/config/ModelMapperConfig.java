@@ -39,6 +39,8 @@ public class ModelMapperConfig {
             PedidoSalida salida = ctx.getDestination() == null ? new PedidoSalida() : ctx.getDestination();
             salida.setId(origen.getId());
             salida.setFecha(origen.getFecha());
+            salida.setSubtotal(origen.getSubtotal());
+            salida.setIva(origen.getIva());
             salida.setTotal(origen.getTotal());
             salida.setEstado(origen.getEstadoPedido() != null ? origen.getEstadoPedido().getNombre() : null);
             if (origen.getUsuario() != null) {

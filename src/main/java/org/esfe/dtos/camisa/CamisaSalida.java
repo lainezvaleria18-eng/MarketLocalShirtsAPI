@@ -16,6 +16,7 @@ public class CamisaSalida implements Serializable {
     private String descripcion;
     private BigDecimal precio;
     private Integer stock;
+    private Boolean agotado;
     private String imagenUrl;
     private String talla;
     private String color;

@@ -15,6 +15,8 @@ public class PedidoSalida implements Serializable {
     private Integer id;
     private UsuarioSalida usuario;
     private LocalDateTime fecha;
+    private BigDecimal subtotal;
+    private BigDecimal iva;
     private BigDecimal total;
     private String estado;
     private List<DetallePedidoSalida> detalles;

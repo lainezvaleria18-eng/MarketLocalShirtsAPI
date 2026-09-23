@@ -182,13 +182,16 @@ public class CamisaService implements ICamisaService {
     private CamisaSalida aSalida(Camisa camisa) {
         CamisaSalida salida = modelMapper.map(camisa, CamisaSalida.class);
         List<ProductoTalla> tallas = productoTallaRepository.findByProductoId(camisa.getId());
+        int stock = 0;
         if (!tallas.isEmpty()) {
             ProductoTalla primera = tallas.get(0);
-            salida.setStock(primera.getStock());
+            stock = primera.getStock() == null ? 0 : primera.getStock();
             if (primera.getTalla() != null) {
                 salida.setTalla(primera.getTalla().getNombre());
             }
         }
+        salida.setStock(stock);
+        salida.setAgotado(stock <= 0);
         List<ProductoColor> colores = productoColorRepository.findByProductoId(camisa.getId());
         if (!colores.isEmpty() && colores.get(0).getColor() != null) {
             salida.setColor(colores.get(0).getColor().getNombre());
