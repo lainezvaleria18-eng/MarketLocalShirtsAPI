@@ -10,6 +10,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import jakarta.validation.Valid;
+
 import java.util.List;
 
 @RestController
@@ -59,7 +61,7 @@ public class CamisaController {
     }
 
     @PostMapping
-    public ResponseEntity<CamisaSalida> crear(@RequestBody CamisaGuardar camisaGuardar) {
+    public ResponseEntity<CamisaSalida> crear(@Valid @RequestBody CamisaGuardar camisaGuardar) {
         CamisaSalida camisa = camisaService.crear(camisaGuardar);
         if (camisa != null)
             return ResponseEntity.ok(camisa);
@@ -67,7 +69,7 @@ public class CamisaController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<CamisaSalida> editar(@PathVariable Integer id, @RequestBody CamisaModificar camisaModificar) {
+    public ResponseEntity<CamisaSalida> editar(@PathVariable Integer id, @Valid @RequestBody CamisaModificar camisaModificar) {
         camisaModificar.setId(id);
         CamisaSalida camisa = camisaService.editar(camisaModificar);
         if (camisa != null)

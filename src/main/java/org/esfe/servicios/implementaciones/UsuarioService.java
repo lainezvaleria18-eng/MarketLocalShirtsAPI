@@ -2,6 +2,8 @@ package org.esfe.servicios.implementaciones;
 
 import org.esfe.dtos.usuario.UsuarioGuardar;
 import org.esfe.dtos.usuario.UsuarioModificar;
+import org.esfe.dtos.usuario.UsuarioPerfilModificar;
+import org.esfe.dtos.usuario.UsuarioPerfilSalida;
 import org.esfe.dtos.usuario.UsuarioSalida;
 import org.esfe.seguridad.modelos.Rol;
 import org.esfe.seguridad.modelos.Usuario;
@@ -66,6 +68,9 @@ public class UsuarioService implements IUsuarioService {
 
     @Override
     public UsuarioSalida crear(UsuarioGuardar usuarioGuardar) {
+        if (usuarioRepository.findByCorreo(usuarioGuardar.getCorreo().trim()).isPresent()) {
+            throw new IllegalArgumentException("El correo ya esta registrado");
+        }
         Usuario usuario = Usuario.builder()
                 .nombre(usuarioGuardar.getNombre())
                 .correo(usuarioGuardar.getCorreo())
@@ -86,8 +91,14 @@ public class UsuarioService implements IUsuarioService {
         if (usuario == null) {
             return null;
         }
+        Integer usuarioId = usuario.getId();
+        usuarioRepository.findByCorreo(usuarioModificar.getCorreo().trim())
+                .filter(existente -> !existente.getId().equals(usuarioId))
+                .ifPresent(existente -> {
+                    throw new IllegalArgumentException("El correo ya esta registrado por otro usuario");
+                });
         usuario.setNombre(usuarioModificar.getNombre());
-        usuario.setCorreo(usuarioModificar.getCorreo());
+        usuario.setCorreo(usuarioModificar.getCorreo().trim());
         usuario.setTelefono(usuarioModificar.getTelefono());
         if (usuarioModificar.getContrasena() != null && !usuarioModificar.getContrasena().isBlank()) {
             usuario.setClave(passwordEncoder.encode(usuarioModificar.getContrasena()));
@@ -103,8 +114,50 @@ public class UsuarioService implements IUsuarioService {
     }
 
     @Override
+    public UsuarioPerfilSalida obtenerPerfil(String correo) {
+        Usuario usuario = obtenerClienteAutenticado(correo);
+        return mapearPerfil(usuario);
+    }
+
+    @Override
+    public UsuarioPerfilSalida actualizarPerfil(String correo, UsuarioPerfilModificar perfilModificar) {
+        Usuario usuario = obtenerClienteAutenticado(correo);
+        Integer usuarioId = usuario.getId();
+
+        usuarioRepository.findByCorreo(perfilModificar.getCorreo())
+                .filter(existente -> !existente.getId().equals(usuarioId))
+                .ifPresent(existente -> {
+                    throw new IllegalArgumentException("El correo ya esta registrado por otro usuario");
+                });
+
+        usuario.setNombre(perfilModificar.getNombre().trim());
+        usuario.setCorreo(perfilModificar.getCorreo().trim());
+        usuario.setTelefono(perfilModificar.getTelefono().trim());
+        usuario = usuarioRepository.save(usuario);
+        return mapearPerfil(usuario);
+    }
+
+    @Override
     public void eliminarPorId(Integer id) {
         usuarioRepository.deleteById(id);
+    }
+
+    private Usuario obtenerClienteAutenticado(String correo) {
+        Usuario usuario = usuarioRepository.findByCorreo(correo)
+                .orElseThrow(() -> new IllegalArgumentException("El usuario autenticado no existe"));
+        if (usuario.getRol() == null || !"CLIENTE".equalsIgnoreCase(usuario.getRol().getNombre())) {
+            throw new IllegalArgumentException("Solo el cliente puede consultar o actualizar su perfil");
+        }
+        return usuario;
+    }
+
+    private UsuarioPerfilSalida mapearPerfil(Usuario usuario) {
+        UsuarioPerfilSalida salida = new UsuarioPerfilSalida();
+        salida.setId(usuario.getId());
+        salida.setNombre(usuario.getNombre());
+        salida.setCorreo(usuario.getCorreo());
+        salida.setTelefono(usuario.getTelefono());
+        return salida;
     }
 
     private Rol obtenerRol(String nombreRol) {

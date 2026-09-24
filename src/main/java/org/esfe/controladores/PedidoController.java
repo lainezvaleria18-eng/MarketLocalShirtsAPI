@@ -13,6 +13,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import jakarta.validation.Valid;
+
 import java.util.List;
 
 @RestController
@@ -63,7 +65,7 @@ public class PedidoController {
     }
 
     @PostMapping
-    public ResponseEntity<PedidoSalida> crear(@RequestBody PedidoGuardar pedidoGuardar,
+    public ResponseEntity<PedidoSalida> crear(@Valid @RequestBody PedidoGuardar pedidoGuardar,
                                              Authentication authentication) {
         if (!esAdmin(authentication)) {
             UsuarioSalida actual = usuarioService.obtenerPorCorreo(authentication.getName());
@@ -79,7 +81,7 @@ public class PedidoController {
 
     @PutMapping("/{id}")
     public ResponseEntity<PedidoSalida> editar(@PathVariable Integer id,
-                                              @RequestBody PedidoModificar pedidoModificar) {
+                                              @Valid @RequestBody PedidoModificar pedidoModificar) {
         pedidoModificar.setId(id);
         PedidoSalida pedido = pedidoService.editar(pedidoModificar);
         if (pedido != null)

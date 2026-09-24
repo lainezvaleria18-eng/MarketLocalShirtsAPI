@@ -10,6 +10,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import jakarta.validation.Valid;
+
 import java.util.List;
 
 @RestController
@@ -44,14 +46,14 @@ public class CategoriaController {
     }
 
     @PostMapping
-    public ResponseEntity<CategoriaSalida> crear(@RequestBody CategoriaGuardar categoriaGuardar) {
+    public ResponseEntity<CategoriaSalida> crear(@Valid @RequestBody CategoriaGuardar categoriaGuardar) {
         CategoriaSalida categoria = categoriaService.crear(categoriaGuardar);
         return ResponseEntity.ok(categoria);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<CategoriaSalida> editar(@PathVariable Integer id,
-                                                 @RequestBody CategoriaModificar categoriaModificar) {
+                                                 @Valid @RequestBody CategoriaModificar categoriaModificar) {
         categoriaModificar.setId(id);
         CategoriaSalida categoria = categoriaService.editar(categoriaModificar);
         return ResponseEntity.ok(categoria);

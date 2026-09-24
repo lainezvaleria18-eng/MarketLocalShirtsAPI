@@ -12,6 +12,7 @@ import java.math.BigDecimal;
 public class DetallePedidoSalida implements Serializable {
     private Integer id;
     private CamisaSalida camisa;
+    private String talla;
     private Integer cantidad;
     private BigDecimal precioUnitario;
     private BigDecimal subtotal;
